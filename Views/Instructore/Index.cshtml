@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewData["Title"] = "Instructors";
+}
+@model List<ListInstructoresViewModel>
+
+<div class="d-flex justify-content-between m-5">
+    <h3 class="text-center">Instructors</h3>
+    <a class="btn btn-success" href="/Instructore/Create">Create</a>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Salary</th>
+            <th scope="col">Course Name</th>
+            <th scope="col">Department Name</th>
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.Salary.ToString("C")</td>
+                <td>@item.CourseName</td>
+                <td>@item.DepartmentName</td>
+                <td><img src="@item.ImageUrl" alt="Avatar" class="img-fluid" width="50"></td>
+                <td>
+                    <a href="/instructore/details/@item.Id" class="btn btn-primary btn-sm">Details</a>
+                    <a href="/instructore/edit/@item.Id" class="btn btn-info btn-sm">Edit</a>
+                    <a href="/instructore/delete/@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
