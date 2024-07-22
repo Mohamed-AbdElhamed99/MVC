@@ -16,6 +16,8 @@ public class Course
 
     public virtual Department? Department { get; set; }
 
+    public virtual List<CourseResult>? CourseResult { get; set; }
+
     public virtual List<Instructore>? Instructores { get; set; }
 
     public virtual List<Trainee>? Trainees { get; set; }

@@ -191,104 +191,37 @@ public class MVCContext : DbContext
 );
         #endregion
         #region Course Results
-        modelBuilder.Entity<CourseResult>().HasData(
-        // Course Results for SD Department (DepartmentId = 1)
-        new CourseResult() { Id = 1, CourseId = 1, TraineeId = 1, Degree = 88 },
-        new CourseResult() { Id = 2, CourseId = 1, TraineeId = 2, Degree = 75 },
-        new CourseResult() { Id = 3, CourseId = 1, TraineeId = 3, Degree = 90 },
-        new CourseResult() { Id = 4, CourseId = 1, TraineeId = 4, Degree = 85 },
-        new CourseResult() { Id = 5, CourseId = 1, TraineeId = 5, Degree = 92 },
+        var random = new Random();
 
-        new CourseResult() { Id = 6, CourseId = 2, TraineeId = 6, Degree = 80 },
-        new CourseResult() { Id = 7, CourseId = 2, TraineeId = 7, Degree = 87 },
-        new CourseResult() { Id = 8, CourseId = 2, TraineeId = 8, Degree = 79 },
-        new CourseResult() { Id = 9, CourseId = 2, TraineeId = 9, Degree = 84 },
-        new CourseResult() { Id = 10, CourseId = 2, TraineeId = 10, Degree = 91 },
+        var courseResults = new List<CourseResult>();
+        int idCounter = 1;
 
-        new CourseResult() { Id = 11, CourseId = 3, TraineeId = 11, Degree = 83 },
-        new CourseResult() { Id = 12, CourseId = 3, TraineeId = 12, Degree = 88 },
-        new CourseResult() { Id = 13, CourseId = 3, TraineeId = 13, Degree = 82 },
-        new CourseResult() { Id = 14, CourseId = 3, TraineeId = 14, Degree = 86 },
-        new CourseResult() { Id = 15, CourseId = 3, TraineeId = 15, Degree = 90 },
+        // Assuming you have 60 trainees (15 trainees per department * 4 departments)
+        for (int traineeId = 1; traineeId <= 60; traineeId++)
+        {
+            var assignedCourses = new HashSet<int>();
+            while (assignedCourses.Count < 5)
+            {
+                int randomCourseId = random.Next(1, 16);
+                if (!assignedCourses.Contains(randomCourseId))
+                {
+                    assignedCourses.Add(randomCourseId);
+                    courseResults.Add(new CourseResult()
+                    {
+                        Id = idCounter++,
+                        CourseId = randomCourseId,
+                        TraineeId = traineeId,
+                        Degree = random.Next(1, 101)
+                    });
+                }
+            }
+        }
 
-        // Course Results for HR Department (DepartmentId = 2)
-        new CourseResult() { Id = 16, CourseId = 4, TraineeId = 16, Degree = 88 },
-        new CourseResult() { Id = 17, CourseId = 4, TraineeId = 17, Degree = 75 },
-        new CourseResult() { Id = 18, CourseId = 4, TraineeId = 18, Degree = 90 },
-        new CourseResult() { Id = 19, CourseId = 4, TraineeId = 19, Degree = 85 },
-        new CourseResult() { Id = 20, CourseId = 4, TraineeId = 20, Degree = 92 },
-
-        new CourseResult() { Id = 21, CourseId = 5, TraineeId = 21, Degree = 80 },
-        new CourseResult() { Id = 22, CourseId = 5, TraineeId = 22, Degree = 87 },
-        new CourseResult() { Id = 23, CourseId = 5, TraineeId = 23, Degree = 79 },
-        new CourseResult() { Id = 24, CourseId = 5, TraineeId = 24, Degree = 84 },
-        new CourseResult() { Id = 25, CourseId = 5, TraineeId = 25, Degree = 91 },
-
-        new CourseResult() { Id = 26, CourseId = 6, TraineeId = 26, Degree = 83 },
-        new CourseResult() { Id = 27, CourseId = 6, TraineeId = 27, Degree = 88 },
-        new CourseResult() { Id = 28, CourseId = 6, TraineeId = 28, Degree = 82 },
-        new CourseResult() { Id = 29, CourseId = 6, TraineeId = 29, Degree = 86 },
-        new CourseResult() { Id = 30, CourseId = 6, TraineeId = 30, Degree = 90 },
-
-        // Course Results for Finance Department (DepartmentId = 3)
-        new CourseResult() { Id = 31, CourseId = 7, TraineeId = 31, Degree = 88 },
-        new CourseResult() { Id = 32, CourseId = 7, TraineeId = 32, Degree = 75 },
-        new CourseResult() { Id = 33, CourseId = 7, TraineeId = 33, Degree = 90 },
-        new CourseResult() { Id = 34, CourseId = 7, TraineeId = 34, Degree = 85 },
-        new CourseResult() { Id = 35, CourseId = 7, TraineeId = 35, Degree = 92 },
-
-        new CourseResult() { Id = 36, CourseId = 8, TraineeId = 36, Degree = 80 },
-        new CourseResult() { Id = 37, CourseId = 8, TraineeId = 37, Degree = 87 },
-        new CourseResult() { Id = 38, CourseId = 8, TraineeId = 38, Degree = 79 },
-        new CourseResult() { Id = 39, CourseId = 8, TraineeId = 39, Degree = 84 },
-        new CourseResult() { Id = 40, CourseId = 8, TraineeId = 40, Degree = 91 },
-
-        new CourseResult() { Id = 41, CourseId = 9, TraineeId = 41, Degree = 83 },
-        new CourseResult() { Id = 42, CourseId = 9, TraineeId = 42, Degree = 88 },
-        new CourseResult() { Id = 43, CourseId = 9, TraineeId = 43, Degree = 82 },
-        new CourseResult() { Id = 44, CourseId = 9, TraineeId = 44, Degree = 86 },
-        new CourseResult() { Id = 45, CourseId = 9, TraineeId = 45, Degree = 90 },
-
-        // Course Results for Marketing Department (DepartmentId = 4)
-        new CourseResult() { Id = 46, CourseId = 10, TraineeId = 46, Degree = 88 },
-        new CourseResult() { Id = 47, CourseId = 10, TraineeId = 47, Degree = 75 },
-        new CourseResult() { Id = 48, CourseId = 10, TraineeId = 48, Degree = 90 },
-        new CourseResult() { Id = 49, CourseId = 10, TraineeId = 49, Degree = 85 },
-        new CourseResult() { Id = 50, CourseId = 10, TraineeId = 50, Degree = 92 },
-
-        new CourseResult() { Id = 51, CourseId = 11, TraineeId = 51, Degree = 80 },
-        new CourseResult() { Id = 52, CourseId = 11, TraineeId = 52, Degree = 87 },
-        new CourseResult() { Id = 53, CourseId = 11, TraineeId = 53, Degree = 79 },
-        new CourseResult() { Id = 54, CourseId = 11, TraineeId = 54, Degree = 84 },
-        new CourseResult() { Id = 55, CourseId = 11, TraineeId = 55, Degree = 91 },
-
-        new CourseResult() { Id = 56, CourseId = 12, TraineeId = 56, Degree = 83 },
-        new CourseResult() { Id = 57, CourseId = 12, TraineeId = 57, Degree = 88 },
-        new CourseResult() { Id = 58, CourseId = 12, TraineeId = 58, Degree = 82 },
-        new CourseResult() { Id = 59, CourseId = 12, TraineeId = 59, Degree = 86 },
-        new CourseResult() { Id = 60, CourseId = 12, TraineeId = 60, Degree = 90 },
-
-        // Course Results for IT Department (DepartmentId = 5)
-        new CourseResult() { Id = 61, CourseId = 13, TraineeId = 61, Degree = 88 },
-        new CourseResult() { Id = 62, CourseId = 13, TraineeId = 62, Degree = 75 },
-        new CourseResult() { Id = 63, CourseId = 13, TraineeId = 63, Degree = 90 },
-        new CourseResult() { Id = 64, CourseId = 13, TraineeId = 64, Degree = 85 },
-        new CourseResult() { Id = 65, CourseId = 13, TraineeId = 65, Degree = 92 },
-
-        new CourseResult() { Id = 66, CourseId = 14, TraineeId = 66, Degree = 80 },
-        new CourseResult() { Id = 67, CourseId = 14, TraineeId = 67, Degree = 87 },
-        new CourseResult() { Id = 68, CourseId = 14, TraineeId = 68, Degree = 79 },
-        new CourseResult() { Id = 69, CourseId = 14, TraineeId = 69, Degree = 84 },
-        new CourseResult() { Id = 70, CourseId = 14, TraineeId = 70, Degree = 91 },
-
-        new CourseResult() { Id = 71, CourseId = 15, TraineeId = 71, Degree = 83 },
-        new CourseResult() { Id = 72, CourseId = 15, TraineeId = 72, Degree = 88 },
-        new CourseResult() { Id = 73, CourseId = 15, TraineeId = 73, Degree = 82 },
-        new CourseResult() { Id = 74, CourseId = 15, TraineeId = 74, Degree = 86 },
-        new CourseResult() { Id = 75, CourseId = 15, TraineeId = 75, Degree = 90 }
-        );
+        modelBuilder.Entity<CourseResult>().HasData(courseResults.ToArray());
 
         #endregion
     }
+
+public DbSet<MVC.ViewModels.ListTraineeViewModel> ListTraineeViewModel { get; set; } = default!;
 
 }

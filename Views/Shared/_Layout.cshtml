@@ -28,7 +28,16 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="instructore" asp-action="Index">Instructores</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Trainee" asp-action="Index">Trainee</a>
+                        </li>
                     </ul>
+                    @if(Context.Session.GetString("username") != null)
+                    {
+                      <a>@Context.Session.GetString("username")</a>  
+                    }else{
+                        <a href="/Login">Login</a>
+                    }
                 </div>
             </div>
         </nav>

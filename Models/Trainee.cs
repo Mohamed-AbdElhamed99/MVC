@@ -13,6 +13,7 @@ public class Trainee
     [ForeignKey("Department")]
     public int? DepartmentId { get; set; }
 
+    public virtual List<CourseResult>? CourseResult { get; set; }
     public virtual List<Course>? Course { get; set; }
     public virtual Department? Department { get; set; }
 

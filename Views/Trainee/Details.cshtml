@@ -1,0 +1,56 @@
+﻿@model TraineeDetailsViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="d-flex justify-content-between">
+    <h3>Details</h3>
+    <a class="btn btn-primary" href="/trainee">Trainee</a>
+</div>
+<div class="card mt-4">
+    <div class="row">
+        <div class="col-3">
+            <img src="/@Model?.ImageUrl" class="card-img-top" alt="Trainee Image" width="350" height="350">
+        </div>
+        <div class="col-9">
+            <div class="card-body">
+                <h5 class="card-title">Trainee Details</h5>
+                <p class="card-text"><strong>ID:</strong> @Model?.Id</p>
+                <p class="card-text"><strong>Name:</strong> @Model?.Name</p>
+                <p class="card-text"><strong>Address:</strong> @Model?.Address</p>
+                <p class="card-text"><strong>Grade:</strong> @Model?.Grade</p>
+                <p class="card-text"><strong>Department Name:</strong> @Model?.DepartmentName</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="mt-4">Trainer Courses</h3>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Degree</th>
+            <th scope="col">Minimum Degree</th>
+            <th scope="col">Trainer Degree</th>
+            <th scope="col">Path status</th>
+            <th scope="col">Hours</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Courses)
+        {
+            <tr class="@item.Color">
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.FullDegree</td>
+                <td>@item.MinDegree</td>
+                <td>@item.TrainerDegree</td>
+                <td>@item.SuccessStatus</td>
+                <td>@item.Hours</td>
+            </tr>
+        }
+    </tbody>
+</table>

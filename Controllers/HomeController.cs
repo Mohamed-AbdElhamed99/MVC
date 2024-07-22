@@ -15,6 +15,14 @@ namespace MVC.Controllers
 
         public IActionResult Index()
         {
+            if(HttpContext.Session.GetString("username") != null)
+            {
+                ViewData["username"] =  HttpContext.Session.GetString("username");
+                ViewData["email"] =  HttpContext.Session.GetString("email");
+                ViewData["phone"] =  HttpContext.Session.GetString("phone");
+
+                return View("Index");
+            }
             return View();
         }
 
