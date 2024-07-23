@@ -8,4 +8,5 @@ public class ListInstructoresViewModel
     public string ImageUrl { get; set; }
     public string DepartmentName { get; set; }
     public string CourseName { get; set; }
+    public PaginationViewModel Pagination { get; set; }
 }

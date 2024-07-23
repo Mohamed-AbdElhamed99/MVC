@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MVC.Models;
 using MVC.ViewModels;
+using System.Drawing;
 
 namespace MVC.Controllers
 {
@@ -10,11 +11,17 @@ namespace MVC.Controllers
     {
         MVCContext _context = new MVCContext();
         // GET: TraineeController
-        public ActionResult Index()
+        public ActionResult Index(int page = 1 , int size = 10)
         {
             List<ListTraineeViewModel> trainee = _context.Trainees
+                .Skip((page - 1) * size)
+                .Take(size)
                 .Select(x => new ListTraineeViewModel() { Id = x.Id , Name = x.Name , Address = x.Address , DepartmentName = x.Department.Name , Grade = x.Grade , ImageUrl = $"/images/{x.Image}" })
                 .ToList();
+
+            int itemsCount = _context.Trainees.ToList().Count();
+            ViewBag.Pagination = PaginationController.setPagination(itemsCount, page, size);
+
             return View("index" , trainee);
         }
 

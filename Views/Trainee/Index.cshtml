@@ -39,3 +39,27 @@
         }
     </tbody>
 </table>
+
+
+<div class="d-flex justify-content-between">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="?page=@ViewBag.Pagination.PrevousePage&size=@ViewBag.Pagination.Size">Previous</a></li>
+            @foreach (var item in ViewBag.Pagination.Pages)
+            {
+                <li class="page-item"><a class="page-link" href="?page=@item&size=@ViewBag.Pagination.Size">@item</a></li>
+            }
+            <li class="page-item"><a class="page-link" href="?page=@ViewBag.Pagination.NextPage&size=@ViewBag.Pagination.Size">Next</a></li>
+        </ul>
+    </nav>
+    <div class="dropdown mb-3">
+        <button class="btn dropdown-toggle" type="button" id="pageSizeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Page Size
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="pageSizeDropdown">
+            <li><a class="dropdown-item dropdown-item-page-size" data-page-size="10" href="?page=@ViewBag.Pagination.CurrentPage&size=10">10</a></li>
+            <li><a class="dropdown-item dropdown-item-page-size" data-page-size="25" href="?page=@ViewBag.Pagination.CurrentPage&size=25">25</a></li>
+            <li><a class="dropdown-item dropdown-item-page-size" data-page-size="50" href="?page=@ViewBag.Pagination.CurrentPage&size=50">50</a></li>
+        </ul>
+    </div>
+</div>

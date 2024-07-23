@@ -4,12 +4,18 @@
 }
 @model List<ListInstructoresViewModel>
 
-<div class="d-flex justify-content-between m-5">
+
+<div class="d-flex justify-content-between mt-5">
     <h3 class="text-center">Instructors</h3>
     <a class="btn btn-success" href="/Instructore/Create">Create</a>
 </div>
 
-<table class="table table-bordered table-hover">
+<form action="" method="get" class="d-flex mt-4">
+    <input class="form-control" type="text" name="search" />
+    <button class="btn btn-primary">Search</button>
+</form>
+
+<table class="table table-bordered table-hover mt-4">
     <thead class="table-dark">
         <tr>
             <th scope="col">Id</th>
@@ -34,10 +40,55 @@
                 <td>
                     <a href="/instructore/details/@item.Id" class="btn btn-primary btn-sm">Details</a>
                     <a href="/instructore/edit/@item.Id" class="btn btn-info btn-sm">Edit</a>
-                    <a href="/instructore/delete/@item.Id" class="btn btn-danger btn-sm">Delete</a>
+
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.Id">
+                        Delete
+                    </button>
+
+                    <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to delete this Item?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="/instructore/delete/@item.Id" method="get">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
+<div class="d-flex justify-content-between">
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="?page=@ViewBag.Pagination.PrevousePage">Previous</a></li>
+            @foreach (var item in ViewBag.Pagination.Pages)
+            {
+                <li class="page-item"><a class="page-link" href="?page=@item&size=@ViewBag.Pagination.Size">@item</a></li>
+            }
+            <li class="page-item"><a class="page-link" href="?page=@ViewBag.Pagination.NextPage">Next</a></li>
+        </ul>
+    </nav>
+    <div class="dropdown mb-3">
+        <button class="btn dropdown-toggle" type="button" id="pageSizeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Page Size
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="pageSizeDropdown">
+            <li><a class="dropdown-item dropdown-item-page-size" data-page-size="10" href="?page=@ViewBag.Pagination.CurrentPage&size=10">10</a></li>
+            <li><a class="dropdown-item dropdown-item-page-size" data-page-size="25" href="?page=@ViewBag.Pagination.CurrentPage&size=25">25</a></li>
+            <li><a class="dropdown-item dropdown-item-page-size" data-page-size="50" href="?page=@ViewBag.Pagination.CurrentPage&size=50">50</a></li>
+        </ul>
+    </div>
+</div>

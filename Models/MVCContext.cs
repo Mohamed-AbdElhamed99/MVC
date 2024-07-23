@@ -221,7 +221,5 @@ public class MVCContext : DbContext
 
         #endregion
     }
-
-public DbSet<MVC.ViewModels.ListTraineeViewModel> ListTraineeViewModel { get; set; } = default!;
-
+    
 }

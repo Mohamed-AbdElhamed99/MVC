@@ -1,20 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MVC.Models;
 using MVC.ViewModels;
+using System.Drawing.Printing;
 
 namespace MVC.Controllers
 {
     public class InstructoreController : Controller
     {
         MVCContext _context =  new MVCContext();
-        public IActionResult Index()
+        
+
+        public IActionResult Index(int page = 1 , int size = 10 , string search = "")
         {
             List<ListInstructoresViewModel> instructors = _context.Instructore
+                .Skip((page - 1) * size)
+                .Take(size)
+                .Where(i => i.Name.ToLower().Contains(search.ToLower()) || i.Department.Name.ToLower().Contains(search.ToLower()) || i.Course.Name.ToLower().Contains(search.ToLower()))
                 .Select(x => new ListInstructoresViewModel { Id=x.Id , Name=x.Name, ImageUrl=$"/images/{x.Image}", Salary=x.Salary,DepartmentName=x.Department.Name , CourseName = x.Course.Name})
                 .ToList();
 
+
+            int itemsCount = _context.Instructore.ToList().Count();
+            ViewBag.Pagination = PaginationController.setPagination(itemsCount , page , size) ;
+       
             return View("Index" , instructors);
         }
+
 
         public IActionResult Details(int id) {
             ShowInstructoreDetailsViewModel instructor = _context.Instructore
@@ -31,6 +42,7 @@ namespace MVC.Controllers
 
             model.Courses = _context.Courses.ToList();
             model.Departments = _context.Departments.ToList();
+
             return View("Create" , model);
         }
 
