@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MVC.Requests;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MVC.Models;
@@ -21,4 +22,17 @@ public class Course
     public virtual List<Instructore>? Instructores { get; set; }
 
     public virtual List<Trainee>? Trainees { get; set; }
+
+
+    public static implicit operator Course(CreateCourseRequest request)
+    {
+        return new Course()
+        {
+            Name = request.Name,
+            Degree = request.Degree,
+            MinDegree = request.MinDegree,
+            Hours = request.Hours,
+            DepartmentId = request.DepartmentId,
+        };
+    }
 }

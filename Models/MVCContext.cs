@@ -15,9 +15,20 @@ public class MVCContext : DbContext
     public DbSet<Department> Departments { get; set; }
     public DbSet<CourseResult> CoursesResult { get; set;}
 
+    public MVCContext()
+    {
+
+    }
+
+    public MVCContext(DbContextOptions<MVCContext> options) : base(options)
+    {
+
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer("Server = MOHAMED\\MOHAMEDSQLSERVER; Database = MVC; Trusted_Connection = True; Encrypt = False");
+        base.OnConfiguring(optionsBuilder);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

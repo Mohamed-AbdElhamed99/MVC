@@ -1,70 +1,102 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting.Internal;
 using MVC.Models;
+using MVC.Repositories;
 using MVC.ViewModels;
+using System.Collections;
 using System.Drawing.Printing;
 
 namespace MVC.Controllers
 {
     public class InstructoreController : Controller
     {
-        MVCContext _context =  new MVCContext();
-        
+        IDepartmentRepository departmentRepository;
+        IInstructoreRepository instructoreRepository;
+        ICourseRepository courseRepository;
+        IWebHostEnvironment _webHostEnvironment;
+
+        public InstructoreController(ICourseRepository _courseRepository , IInstructoreRepository _instructoreRepository , IDepartmentRepository _departmentRepository, IWebHostEnvironment webHostEnvironment)
+        {
+            instructoreRepository = _instructoreRepository;
+            departmentRepository = _departmentRepository;
+            courseRepository = _courseRepository;
+           _webHostEnvironment = webHostEnvironment;
+        }
 
         public IActionResult Index(int page = 1 , int size = 10 , string search = "")
         {
-            List<ListInstructoresViewModel> instructors = _context.Instructore
-                .Skip((page - 1) * size)
-                .Take(size)
-                .Where(i => i.Name.ToLower().Contains(search.ToLower()) || i.Department.Name.ToLower().Contains(search.ToLower()) || i.Course.Name.ToLower().Contains(search.ToLower()))
-                .Select(x => new ListInstructoresViewModel { Id=x.Id , Name=x.Name, ImageUrl=$"/images/{x.Image}", Salary=x.Salary,DepartmentName=x.Department.Name , CourseName = x.Course.Name})
+            List<Instructore> l = instructoreRepository.GetAll(page , size , search);
+
+            List<ListInstructoresViewModel>? instructores =
+                l.Select(x => new ListInstructoresViewModel {
+                    Id = x.Id,
+                    Name = x.Name,
+                    ImageUrl = $"/images/{x.Image}",
+                    Salary = x.Salary,
+                    DepartmentName = x.Department?.Name,
+                    CourseName = x.Course?.Name })
                 .ToList();
 
-
-            int itemsCount = _context.Instructore.ToList().Count();
+            int itemsCount = instructoreRepository.Count();
             ViewBag.Pagination = PaginationController.setPagination(itemsCount , page , size) ;
        
-            return View("Index" , instructors);
+            return View("Index" , instructores);
         }
 
 
-        public IActionResult Details(int id) {
-            ShowInstructoreDetailsViewModel instructor = _context.Instructore
-                .Where(x => x.Id == id)
-                .Select(x => new ShowInstructoreDetailsViewModel { Id = x.Id, Name = x.Name, ImageUrl = $"/images/{x.Image}", Address=x.Address ,Salary = x.Salary, DepartmentName = x.Department.Name, CourseName = x.Course.Name })
-                .FirstOrDefault();
-
-          return View("Details" , instructor);
+        public IActionResult Details(int id)
+        {
+            Instructore instructore = instructoreRepository.GetById(id);
+            ShowInstructoreDetailsViewModel? viewModel = new ShowInstructoreDetailsViewModel {
+                Id = instructore.Id,
+                Name = instructore.Name,
+                ImageUrl = $"/images/{instructore.Image}",
+                Salary = instructore.Salary,
+                Address = instructore?.Address,
+                DepartmentName = instructore.Department?.Name,
+                CourseName = instructore.Course?.Name
+            };
+            return View("Details", viewModel);
         }
 
         public IActionResult Create()
         {
-            CreateInstructorViewModel model = new CreateInstructorViewModel();
-
-            model.Courses = _context.Courses.ToList();
-            model.Departments = _context.Departments.ToList();
-
-            return View("Create" , model);
+            CreateInstructoreViewModel model = new CreateInstructoreViewModel();
+            model.Departments = departmentRepository.GetAll();
+            return View("Create", model);
         }
 
-        public IActionResult Store(Instructore newInstructore)
+        public IActionResult Store(CreateInstructoreViewModel newInstructore)
         {
-            if(newInstructore.Name != null && newInstructore.Salary != null && newInstructore.Image != null && newInstructore.Salary > 0)
+            if (ModelState.IsValid)
             {
-                _context.Instructore.Add(newInstructore);
-                _context.SaveChanges();
+                if (newInstructore.FormFile != null)
+                {
+                    string file_name = $"{Guid.NewGuid().ToString()}_{newInstructore.FormFile.FileName}";
+                    string folder = $"/images/{file_name}";
+                    string path = this._webHostEnvironment.WebRootPath.Replace("\\", "/") + folder;
+                    newInstructore.FormFile.CopyToAsync(new FileStream(path, FileMode.Create));
+                    newInstructore.Image = file_name;
+                }
+                instructoreRepository.Create((Instructore)newInstructore);
+                instructoreRepository.Save();
+
                 return RedirectToAction("Index");
             }
-            return View("Create" , newInstructore);
+            else
+            {
+                newInstructore.Departments = departmentRepository.GetAll();
+                return View("Create", newInstructore);
+            }
+
         }
 
         public IActionResult Edit(int Id)
         {
-            CreateInstructorViewModel model = new CreateInstructorViewModel();
+            CreateInstructoreViewModel model = new CreateInstructoreViewModel();
 
-            model.Courses = _context.Courses.ToList();
-            model.Departments = _context.Departments.ToList();
-
-            Instructore instructore = _context.Instructore.Where(x => x.Id == Id).FirstOrDefault();
+            Instructore instructore = instructoreRepository.GetById(Id);
 
             model.Id = instructore.Id;
             model.Name = instructore.Name;
@@ -74,48 +106,29 @@ namespace MVC.Controllers
             model.CourseId = instructore.CourseId;
             model.DepartmentId = instructore.DepartmentId;
 
+            model.Departments = departmentRepository.GetAll();
+            model.Courses = courseRepository.GetCoursesByDeptId(instructore.DepartmentId);
+
             return View("Edit", model);
         }
 
-        public IActionResult Update(int Id ,Instructore updatedInstructore)
+        public IActionResult Update(int Id, Instructore instructore)
         {
-            if (updatedInstructore.Name != null && updatedInstructore.Salary != null && updatedInstructore.Image != null && updatedInstructore.Salary > 0)
-            {
-                Instructore instructore = _context.Instructore.Where(x => x.Id == Id).FirstOrDefault();
-
-                instructore.Id = updatedInstructore.Id ;
-                instructore.Name = updatedInstructore.Name ;
-                instructore.Salary = updatedInstructore.Salary ;
-                instructore.Image = updatedInstructore.Image ;
-                instructore.Address = updatedInstructore.Address ;
-                instructore.CourseId = updatedInstructore.CourseId ;
-                instructore.DepartmentId = updatedInstructore.DepartmentId;
-
-
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            CreateInstructorViewModel model = new CreateInstructorViewModel();
-
-            model.Courses = _context.Courses.ToList();
-            model.Departments = _context.Departments.ToList();
-            model.Id = updatedInstructore.Id;
-            model.Name = updatedInstructore.Name;
-            model.Salary = updatedInstructore.Salary;
-            model.Image = updatedInstructore.Image;
-            model.Address = updatedInstructore.Address;
-            model.CourseId = updatedInstructore.CourseId;
-            model.DepartmentId = updatedInstructore.DepartmentId;
-            return View("Edit", updatedInstructore);
+            instructoreRepository.Update(instructore);
+            instructoreRepository.Save();
+            return RedirectToAction("Index");
         }
 
         public IActionResult Delete(int Id)
         {
-            Instructore instructore = _context.Instructore.Where(x => x.Id == Id).FirstOrDefault();
-            _context.Instructore.Remove(instructore);
-            _context.SaveChanges();
+            instructoreRepository.Delete(Id);
+            instructoreRepository.Save();
             return RedirectToAction("Index");
+        }
+
+        public IActionResult GetCourses(int deptID)
+        {
+            return Json(courseRepository.GetCoursesByDeptId(deptID));
         }
     }
 }

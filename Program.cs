@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using MVC.Models;
+using MVC.Repositories;
+
 namespace MVC
 {
     public class Program
@@ -9,6 +13,13 @@ namespace MVC
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddSession();
+
+            builder.Services.AddDbContext<MVCContext>(option => { option.UseSqlServer(builder.Configuration.GetConnectionString("cs")); });
+
+            builder.Services.AddScoped<IInstructoreRepository , InstructoreRepository>();
+            builder.Services.AddScoped<IDepartmentRepository , DepartmentRepository>();
+            builder.Services.AddScoped<ICourseRepository , CourseRepository>();
+           
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -30,7 +41,7 @@ namespace MVC
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=CP}/{action=Index}/{id?}");
 
             app.Run();
         }

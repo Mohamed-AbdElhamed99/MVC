@@ -1,46 +1,96 @@
-﻿@model CreateInstructorViewModel
+﻿@model CreateInstructoreViewModel
 @{
     ViewData["Title"] = "Create";
+    Layout = "_CPLayout";
+    SelectList departments = new SelectList(Model.Departments , "Id" ,"Name");
 }
 
-<h1>Create</h1>
 
-<a class="btn btn-primary" href="/instructore">Instructors</a>
+<div class="page-header">
+    <h3 class="page-title"> Create Instructore </h3>
+    <a href="/instructore" class="btn btn-primary">Instructors</a>
+</div>
 
-<form action="/Instructore/Store" method="post">
-    <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <input type="text" class="form-control" id="name" name="Name" value="@Model?.Name" required>
+<div class="col-md-12 grid-margin stretch-card">
+    <div class="card">  
+        <div class="card-body">
+            <form asp-controller="Instructore" asp-action="Store" class="forms-sample" method="post" enctype="multipart/form-data">
+             
+                <div class="form-group row">
+                    <label asp-for="Name" class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <input asp-for="Name"  class="form-control">
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Salary" class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <input type="number" asp-for="Salary" class="form-control">
+                        <span asp-validation-for="Salary" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Address" class="col-sm-3 col-form-label">Address </label>
+                    <div class="col-sm-9">
+                        <input asp-for="Address" class="form-control">
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="FormFile" class="col-sm-3 col-form-label"> </label>
+                    <div class="col-sm-9">
+                        <input type="file" asp-for="FormFile" class="form-control">
+                        <span asp-validation-for="FormFile" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="DepartmentId" class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <select asp-for="DepartmentId" id="DepartmentId" asp-items="departments" class="form-select">
+                            <option value="0"> -- Select Department -- </option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    @* <label asp-for="CourseId" class="col-sm-3 col-form-label"></label>
+                    <div class="col-sm-9">
+                        <select asp-for="CourseId" asp-items="departments" class="form-select">
+                            <option value="0"> -- Select Course -- </option>
+                        </select>
+                        <span asp-validation-for="CourseId" class="text-danger"></span>
+                    </div> *@
+
+                    <label for="CourseId" class="col-sm-3 col-form-label">Course</label>
+                    <div class="col-sm-9">
+                        <select id="CourseId" name="CourseId" class="form-select">
+                            <option value="0"> -- Select Course -- </option>
+                        </select>
+                        <span asp-validation-for="CourseId" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <button type="submit" class="btn btn-primary me-2">Submit</button>
+            </form>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="imageUrl" class="form-label">Image URL</label>
-        <input type="text" class="form-control" id="imageUrl" name="Image" value="@Model?.Image" required>
-    </div>
-    <div class="mb-3">
-        <label for="salary" class="form-label">Salary</label>
-        <input type="number" class="form-control" id="salary" name="Salary" value="@Model?.Salary" required>
-    </div>
-    <div class="mb-3">
-        <label for="address" class="form-label">Address</label>
-        <input type="text" class="form-control" id="name" name="Address" value="@Model?.Address">
-    </div>
-    <div class="mb-3">
-        <label for="department" class="form-label">Department</label>
-        <select class="form-select" id="department" name="DepartmentId" required>
-            @foreach(var dep in Model.Departments)
-            {
-                <option value="@dep.Id">@dep.Name</option>
-            }
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="course" class="form-label">Course</label>
-        <select class="form-select" id="department" name="CourseId" required>
-            @foreach (var crs in Model.Courses)
-            {
-                <option value="@crs.Id">@crs.Name</option>
-            }
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Create Instructor</button>
-</form>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $('#DepartmentId').change(function () {
+        let deptID = this.value;
+        let courseSelectBox = document.getElementById("CourseId")
+        courseSelectBox.innerHTML = "";
+            $.ajax({
+            url: "/Instructore/GetCourses?deptID=" + deptID,
+                success: function (result) {
+                    for (let item of result) {
+                        courseSelectBox.innerHTML += "<option value=" + item.id + ">" + item.name + "</option>";
+                    }
+                }
+            });
+    });
+
+</script>

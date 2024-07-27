@@ -1,8 +1,8 @@
-﻿@model MVC.ViewModels.CourseActionViewModel
+﻿@model MVC.Requests.CreateCourseRequest
 
 @{
     ViewData["Title"] = "Create";
-    SelectList Depts = new SelectList(Model.Department , "Id" ,  "Name");
+    SelectList Depts = new SelectList(@Model.departments , "Id" ,  "Name");
 
 }
 
@@ -14,26 +14,40 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group mb-3">
         <label asp-for="Name" class="control-label"></label>
-        <input asp-for="Name" class="form-control" required/>
+        <input asp-for="Name" class="form-control"  />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
         <label asp-for="Degree" class="control-label"></label>
-        <input asp-for="Degree" class="form-control" required />
+        <input type="number" asp-for="Degree" class="form-control" />
+        <span asp-validation-for="Degree" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
         <label asp-for="MinDegree" class="control-label"></label>
-        <input asp-for="MinDegree" class="form-control" required />
+        <input type="number" asp-for="MinDegree" class="form-control"   />
+        <span asp-validation-for="MinDegree" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
         <label asp-for="Hours" class="control-label"></label>
-        <input asp-for="Hours" class="form-control" required />
+        <input type="number" asp-for="Hours" class="form-control" />
+        <span asp-validation-for="Hours" class="text-danger"></span>
     </div>
+
     <div class="form-group mb-3">
         <label asp-for="DepartmentId" class="control-label"></label>
-        <select asp-for="DepartmentId" class="form form-control" asp-items="Depts" required></select>
+        <select asp-for="DepartmentId" class="form form-control" asp-items="Depts">
+            <option value="0" >-- select department --</option>
+        </select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span>
     </div>  
+
     <div class="form-group ">
         <input type="submit" value="Create" class="btn btn-primary mt-3" />
     </div>
-</form>
+</form> 
 
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

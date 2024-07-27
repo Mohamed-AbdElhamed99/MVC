@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MVC.HTMLBuilder;
 using MVC.Models;
+using MVC.Requests;
 using MVC.ViewModels;
 using System.Drawing;
 
@@ -31,21 +33,29 @@ public class CourseController : Controller
     // GET: CourseController/Create
     public ActionResult Create()
     {
-        CourseActionViewModel courseActionView = new CourseActionViewModel();
+        CreateCourseRequest request = new CreateCourseRequest();
+        request.departments = _context.Departments.ToList();
 
-        courseActionView.Department = _context.Departments.ToList();
-
-        return View("Create" , courseActionView);
+        return View("Create" , request);
     }
 
     // POST: CourseController/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public ActionResult Create(Course newCourse)
+    public ActionResult Create(CreateCourseRequest newCourse)
     {
-        _context.Courses.Add(newCourse);
-        _context.SaveChanges();
-        return RedirectToAction("Index");
+        if (ModelState.IsValid)
+        {
+             _context.Courses.Add((Course)newCourse);
+             _context.SaveChanges();
+            return RedirectToAction("Index");
+
+        }
+        //ViewBag.Departments = _context.Departments.ToList();
+        
+        newCourse.departments = _context.Departments.ToList();
+
+        return View("Create");
     }
 
     // GET: CourseController/Edit/5
@@ -89,4 +99,20 @@ public class CourseController : Controller
             return View();
         }
     }
+
+    public IActionResult ValidateDegree(int Degree)
+    {
+        return Json(Degree >= 50 && Degree <=  100);
+    }
+
+    public IActionResult ValidateMinDegree(int MinDegree, int Degree)
+    {
+        return Json(MinDegree <= Degree);
+    }
+
+    public IActionResult ValidateHours(int Hours)
+    {
+        return Json(Hours % 3 == 0);
+    }
+
 }

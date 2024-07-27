@@ -1,4 +1,4 @@
-﻿@model CreateInstructorViewModel
+﻿@model CreateInstructoreViewModel
 @{
     ViewData["Title"] = "Edit";
 }
@@ -27,12 +27,12 @@
     </div>
     <div class="mb-3">
         <label for="department" class="form-label">Department</label>
-        <select class="form-select" id="department" name="DepartmentId" required>
+        <select class="form-select" id="DepartmentId" name="DepartmentId" required>
             @foreach (var dep in Model.Departments)
             {
                 @if (@dep.Id == Model.DepartmentId)
                 {
-                    
+                    <option value="@dep.Id" selected>@dep.Name</option>
                 }else
                 {
                     <option value="@dep.Id">@dep.Name</option>
@@ -43,8 +43,8 @@
     </div>
     <div class="mb-3">
         <label for="course" class="form-label">Course</label>
-        <select class="form-select" id="department" name="CourseId" required>
-            @foreach (var crs in Model.Courses)
+        <select class="form-select" id="CourseId" name="CourseId" required>
+            @foreach (var crs in Model.Courses.Where(x => x.DepartmentId == Model.DepartmentId).ToList() )
             {
                 @if (@crs.Id == Model.CourseId)
                 {
@@ -60,3 +60,21 @@
     </div>
     <button type="submit" class="btn btn-primary">Update Instructor</button>
 </form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $('#DepartmentId').change(function () {
+        let deptID = this.value;
+        console.log(deptID);
+        let courseSelectBox = document.getElementById("CourseId")
+        courseSelectBox.innerHTML = "";
+        $.ajax({
+            url: "/Instructore/GetCourses?deptID=" + deptID,
+            success: function (result) {
+                for (let item of result) {
+                    courseSelectBox.innerHTML += "<option value=" + item.id + ">" + item.name + "</option>";
+                }
+            }
+        });
+    });
+</script>
